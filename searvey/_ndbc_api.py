@@ -32,14 +32,14 @@ def _get_ndbc_stations(
         ndbc_api_client = NdbcApi()
 
     stations_df = ndbc_api_client.stations()
-    stations_df[["lat", "ns", "lon", "ew"]] = stations_df["Location Lat/Long"].str.extract(
+    stations_df[["lat", "ns", "lon", "ew"]] = stations_df["Location"].str.extract(
         r"(\d+\.\d+)([N|S]) (\d+\.\d+)([E|W])"
     )
     stations_df["lat"] = pd.to_numeric(stations_df["lat"])
     stations_df["lon"] = pd.to_numeric(stations_df["lon"])
     stations_df["lat"] = stations_df["lat"] * np.where(stations_df["ns"] == "S", -1, 1)
     stations_df["lon"] = stations_df["lon"] * np.where(stations_df["ew"] == "W", -1, 1)
-    stations_df = stations_df.drop(columns=["Location Lat/Long"])
+    stations_df = stations_df.drop(columns=["Location"])
 
     stations_df = gpd.GeoDataFrame(
         data=stations_df,
